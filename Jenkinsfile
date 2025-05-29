@@ -2,15 +2,15 @@ pipeline {
     agent any
 
     environment {
-        AWS_ACCESS_KEY_ID     = credentials('your-aws-access-key-id')     // from Jenkins credentials
-        AWS_SECRET_ACCESS_KEY = credentials('your-aws-secret-access-key') // from Jenkins credentials
+        AWS_ACCESS_KEY_ID     = credentials('aws-access-key-id')     // from Jenkins credentials
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key') // from Jenkins credentials
         AWS_REGION = 'us-east-2'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/<your-username>/<repo-name>.git', branch: 'main'
+                git url: 'https://github.com/zeebabes/lambda-file-processor.git', branch: 'test-build'
             }
         }
 
