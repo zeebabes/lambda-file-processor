@@ -16,19 +16,20 @@ pipeline {
 
         stage('Zip Lambda Function') {
             steps {
-                sh 'zip lambda_function_payload.zip lambda_function.py'
+                bat 'powershell Compress-Archive -Path lambda_function.py -DestinationPath lambda_function_payload.zip -Force'
+
             }
         }
 
         stage('Terraform Init') {
             steps {
-                sh 'terraform init'
+                bat 'terraform init'
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                sh 'terraform apply -auto-approve'
+                bat 'terraform apply -auto-approve'
             }
         }
     }
