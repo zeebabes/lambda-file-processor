@@ -30,7 +30,7 @@ resource "aws_iam_role" "lambda_exec_role" {
 
   lifecycle {
     prevent_destroy = true
-    ignore_changes  = [tags, name]
+    ignore_changes  = [name, tags]
   }
 }
 
@@ -44,7 +44,6 @@ resource "aws_lambda_function" "s3_trigger_lambda" {
   role          = aws_iam_role.lambda_exec_role.arn
   handler       = "lambda_function.lambda_handler"
   runtime       = "python3.9"
-
   filename         = "${path.module}/lambda_function_payload.zip"
   source_code_hash = filebase64sha256("${path.module}/lambda_function_payload.zip")
 }
@@ -74,10 +73,10 @@ resource "aws_apigatewayv2_api" "lambda_api" {
 }
 
 resource "aws_apigatewayv2_integration" "lambda_integration" {
-  api_id           = aws_apigatewayv2_api.lambda_api.id
-  integration_type = "AWS_PROXY"
-  integration_uri  = aws_lambda_function.s3_trigger_lambda.invoke_arn
-  integration_method = "POST"
+  api_id                = aws_apigatewayv2_api.lambda_api.id
+  integration_type      = "AWS_PROXY"
+  integration_uri       = aws_lambda_function.s3_trigger_lambda.invoke_arn
+  integration_method    = "POST"
   payload_format_version = "2.0"
 }
 
