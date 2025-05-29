@@ -1,10 +1,15 @@
 provider "aws" {
-  region = "us-east-2"
+  region = var.region
 }
 
 resource "aws_s3_bucket" "uploads" {
   bucket = var.bucket_name
   force_destroy = true
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes  = [tags]
+  }
 }
 
 resource "aws_iam_role" "lambda_exec_role" {
@@ -22,6 +27,11 @@ resource "aws_iam_role" "lambda_exec_role" {
       }
     ]
   })
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes  = [tags, name]
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
@@ -83,7 +93,7 @@ resource "aws_apigatewayv2_stage" "default_stage" {
   auto_deploy = true
 }
 
-resource "aws_lambda_permission" "apigw_permission" {
+resource "aws_lambda_permission" "allow_api_gateway" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.s3_trigger_lambda.function_name
